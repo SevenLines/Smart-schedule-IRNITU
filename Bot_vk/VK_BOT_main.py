@@ -9,6 +9,7 @@ from functions.storage import MongodbService
 from vkbottle.keyboard import Keyboard, Text
 from functions.find_week import find_week
 from vkbottle.bot import Bot, Message
+from datetime import datetime, timedelta
 from pymongo import MongoClient
 from vkbottle.ext import Middleware
 from vk_api import vk_api, VkUpload
@@ -454,6 +455,13 @@ async def scheduler(ans: Message):
             return
         schedule = schedule['schedule']
         week = find_week()
+        if datetime.now(TZ_IRKUTSK).strftime('%A').lower() == "воскресенье":
+            if week == 'odd':
+                week = 'even'
+            elif week == 'even':
+                week = 'odd'
+            else:
+                week = 'all'
         schedule_next_day = get_next_day_schedule_in_str(schedule=schedule, week=week)
         if not schedule_next_day:
             await ans('Завтра пар нет 😎')
