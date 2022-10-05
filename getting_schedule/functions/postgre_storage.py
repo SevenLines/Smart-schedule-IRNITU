@@ -28,7 +28,7 @@ def get_institutes() -> list:
     """Получение институтов из PostgreSQL"""
     with closing(psycopg2.connect(**db_params)) as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute("SELECT DISTINCT faculty_title from real_groups WHERE coalesce(faculty_title, '') != ''")
+            cursor.execute("SELECT DISTINCT faculty_title from real_groups WHERE coalesce(faculty_title, '') != '' WHERE is_active = True")
             rows = cursor.fetchall()
             institutes = [dict(institute) for institute in rows]
             return institutes
@@ -39,7 +39,7 @@ def get_groups() -> list:
     with closing(psycopg2.connect(**db_params)) as conn:
         with conn.cursor(cursor_factory=DictCursor) as cursor:
             # Вместо id института подставляется сразу название.
-            cursor.execute("SELECT obozn, kurs, faculty_title as fac FROM real_groups")
+            cursor.execute("SELECT obozn, kurs, faculty_title as fac FROM real_groups WHERE is_active = True")
             rows = cursor.fetchall()
             groups = [dict(group) for group in rows]
             return groups
